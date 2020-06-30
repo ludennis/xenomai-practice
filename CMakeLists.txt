@@ -16,3 +16,9 @@ target_include_directories(rt_main
 target_link_libraries(rt_main
   ${XENOMAI_LIBRARIES}
 )
+
+target_compile_options(rt_main
+  PUBLIC
+  -g
+  -fpermissive
+)
