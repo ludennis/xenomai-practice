@@ -1,4 +1,5 @@
 #include <signal.h>
+#include <sys/mman.h>
 
 #include <iostream>
 
@@ -31,6 +32,7 @@ int main(int argc, char *argv[])
   rt_task_create(&rtTask, "RtTask", kStackSize, kPriority, kMode);
   rt_task_set_periodic(&rtTask, TM_NOW, rt_timer_ns2ticks(kOneSecond));
   rt_task_start(&rtTask, Routine, NULL);
+  mlockall(MCL_CURRENT|MCL_FUTURE);
 
   struct sigaction action;
   action.sa_handler = terminationHandler;
