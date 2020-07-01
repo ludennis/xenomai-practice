@@ -6,7 +6,7 @@ find_package(Xenomai 3 REQUIRED)
 
 # message queue send
 add_executable(message_queue_send
-  src/message_queue_send.cpp
+  src/intertask_communication/message_queue_send.cpp
 )
 
 target_include_directories(message_queue_send
@@ -26,7 +26,7 @@ target_compile_options(message_queue_send
 
 # message queue receive
 add_executable(message_queue_receive
-  src/message_queue_receive.cpp
+  src/intertask_communication/message_queue_receive.cpp
 )
 
 target_include_directories(message_queue_receive
