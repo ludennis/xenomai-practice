@@ -34,7 +34,6 @@ void SendRoutine(void*)
 
   rt_printf("Received reply: %s\n", receiveMessage.data);
 
-  // clean up
   free(receiveMessage.data);
   free(sendMessage.data);
 }

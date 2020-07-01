@@ -18,11 +18,6 @@ void ReceiveRoutine(void*)
     RT_TASK_MCB receiveMessage;
 
     receiveMessage.data = (char*) malloc(RtMacro::kMessageSize);
-    receiveMessage.size = RtMacro::kMessageSize;
-
-    rt_task_receive(&receiveMessage, TM_INFINITE);
-
-    rt_printf("message received: %s\n", receiveMessage.data);
 
     RT_TASK_MCB sendMessage;
 
@@ -31,9 +26,24 @@ void ReceiveRoutine(void*)
     memcpy(sendMessage.data, sendData, sizeof(char) * RtMacro::kMessageSize);
     sendMessage.size = RtMacro::kMessageSize;
 
+    auto retval = rt_task_receive(&receiveMessage, TM_INFINITE);
+    if (retval < 0)
+    {
+      rt_printf("Error with rt_task_receive: %s\n", strerror(-retval));
+    }
+    auto flowid = retval;
+    rt_printf("Flow id of received message: %d\n", flowid);
+    rt_printf("Size of received message: %d\n", receiveMessage.size);
+
+    retval = rt_task_reply(flowid, &sendMessage);
+    if (retval < 0)
+    {
+      rt_printf("Error with rt_task_reply: %s\n", strerror(-retval));
+    }
+
+    rt_printf("message received: %s\n", receiveMessage.data);
     rt_printf("Sending back reply: %s\n", sendMessage.data);
 
-    rt_task_reply(receiveMessage.flowid, &sendMessage);
 
     rt_task_bind(&rtSendTask, "rtSendTask", TM_INFINITE);
     rt_task_join(&rtSendTask);
@@ -52,7 +62,7 @@ int main(int argc, char *argv[])
   rt_task_create(&rtReceiveTask, "rtReceiveTask", RtMacro::kStackSize,
     RtMacro::kPriority, T_JOINABLE);
   rt_task_set_periodic(&rtReceiveTask, TM_NOW,
-    rt_timer_ns2ticks(RtMacro::kOneHundredMilliseconds));
+    rt_timer_ns2ticks(RtMacro::kOneSecond));
   rt_task_start(&rtReceiveTask, ReceiveRoutine, NULL);
 
   rt_task_join(&rtReceiveTask);
