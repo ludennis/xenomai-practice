@@ -45,3 +45,33 @@ target_compile_options(message_queue_receive
   -g
   -fpermissive
 )
+
+# task send
+add_executable(task_send
+  src/intertask_communication/task_send.cpp
+)
+
+target_include_directories(task_send
+  PUBLIC
+  ${XENOMAI_INCLUDE_DIRS}
+  src/common
+)
+
+target_link_libraries(task_send
+  ${XENOMAI_LIBRARIES}
+)
+
+# task receive
+add_executable(task_receive
+  src/intertask_communication/task_receive.cpp
+)
+
+target_include_directories(task_receive
+  PUBLIC
+  ${XENOMAI_INCLUDE_DIRS}
+  src/common
+)
+
+target_link_libraries(task_receive
+  ${XENOMAI_LIBRARIES}
+)
