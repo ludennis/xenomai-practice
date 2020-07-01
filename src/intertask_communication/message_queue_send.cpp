@@ -6,35 +6,27 @@
 #include <alchemy/task.h>
 #include <alchemy/queue.h>
 
+#include <RtMacro.h>
+
 RT_TASK rtSendTask;
 
 RT_QUEUE rtQueue;
 
 RT_QUEUE_INFO rtQueueInfo;
 
-auto constexpr kStackSize = 0;
-auto constexpr kPriority = 99;
-auto constexpr kMode = 0;
-auto constexpr kOneSecond = 1e9;
-auto constexpr kOneHundredMilliseconds = 1e8;
-auto constexpr kOneMillisecond = 1e6;
-auto constexpr kQueuePoolSize = 4096u;
-auto constexpr kQueueMessageLimit = 10u;
-auto constexpr kMessageSize = 256u;
-
 void SendRoutine(void*)
 {
   for (;;)
   {
     rt_printf("TaskOne: sending hi to rtQueue\n\n");
-    void *message = rt_queue_alloc(&rtQueue, kMessageSize);
+    void *message = rt_queue_alloc(&rtQueue, RtMacro::kMessageSize);
     if (message == NULL)
       rt_printf("rt_queue_alloc error\n");
     rt_queue_inquire(&rtQueue, &rtQueueInfo);
     char sendData[] = "yo";
-    memcpy(message, sendData, sizeof(char) * kMessageSize);
+    memcpy(message, sendData, sizeof(char) * RtMacro::kMessageSize);
 
-    rt_queue_send(&rtQueue, message, sizeof(char) * kMessageSize, Q_NORMAL);
+    rt_queue_send(&rtQueue, message, sizeof(char) * RtMacro::kMessageSize, Q_NORMAL);
     rt_task_wait_period(NULL);
   }
 }
@@ -69,8 +61,9 @@ int main(int argc, char *argv[])
 
   rt_printf("Queue found!\n");
 
-  rt_task_create(&rtSendTask, "rtSendTask", kStackSize, kPriority, kMode);
-  rt_task_set_periodic(&rtSendTask, TM_NOW, rt_timer_ns2ticks(kOneSecond));
+  rt_task_create(&rtSendTask, "rtSendTask", RtMacro::kStackSize,
+    RtMacro::kPriority, RtMacro::kMode);
+  rt_task_set_periodic(&rtSendTask, TM_NOW, rt_timer_ns2ticks(RtMacro::kOneSecond));
   rt_task_start(&rtSendTask, SendRoutine, NULL);
 
   for (;;)

@@ -12,6 +12,7 @@ add_executable(message_queue_send
 target_include_directories(message_queue_send
   PUBLIC
   ${XENOMAI_INCLUDE_DIRS}
+  src/common
 )
 
 target_link_libraries(message_queue_send
@@ -32,6 +33,7 @@ add_executable(message_queue_receive
 target_include_directories(message_queue_receive
   PUBLIC
   ${XENOMAI_INCLUDE_DIRS}
+  src/common
 )
 
 target_link_libraries(message_queue_receive
