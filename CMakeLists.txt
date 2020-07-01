@@ -75,3 +75,33 @@ target_include_directories(task_receive
 target_link_libraries(task_receive
   ${XENOMAI_LIBRARIES}
 )
+
+# message pipe send
+add_executable(message_pipe_send
+  src/intertask_communication/message_pipe_send.cpp
+)
+
+target_include_directories(message_pipe_send
+  PUBLIC
+  ${XENOMAI_INCLUDE_DIRS}
+  src/common
+)
+
+target_link_libraries(message_pipe_send
+  ${XENOMAI_LIBRARIES}
+)
+
+# task receive
+add_executable(message_pipe_receive
+  src/intertask_communication/message_pipe_receive.cpp
+)
+
+target_include_directories(message_pipe_receive
+  PUBLIC
+  ${XENOMAI_INCLUDE_DIRS}
+  src/common
+)
+
+target_link_libraries(message_queue_receive
+  ${XENOMAI_LIBRARIES}
+)
