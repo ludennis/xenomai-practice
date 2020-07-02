@@ -91,7 +91,7 @@ target_link_libraries(message_pipe_send
   ${XENOMAI_LIBRARIES}
 )
 
-# task receive
+# message pipe receive
 add_executable(message_pipe_receive
   src/intertask_communication/message_pipe_receive.cpp
 )
@@ -102,6 +102,6 @@ target_include_directories(message_pipe_receive
   src/common
 )
 
-target_link_libraries(message_queue_receive
+target_link_libraries(message_pipe_receive
   ${XENOMAI_LIBRARIES}
 )
