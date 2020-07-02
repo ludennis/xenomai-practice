@@ -105,3 +105,34 @@ target_include_directories(message_pipe_receive
 target_link_libraries(message_pipe_receive
   ${XENOMAI_LIBRARIES}
 )
+
+# round trip send
+add_executable(round_trip_send
+  src/timing/round_trip_send.cpp
+)
+
+target_include_directories(round_trip_send
+  PUBLIC
+  ${XENOMAI_INCLUDE_DIRS}
+  src/common
+)
+
+target_link_libraries(round_trip_send
+  ${XENOMAI_LIBRARIES}
+)
+
+
+# round trip receive
+add_executable(round_trip_receive
+  src/timing/round_trip_receive.cpp
+)
+
+target_include_directories(round_trip_receive
+  PUBLIC
+  ${XENOMAI_INCLUDE_DIRS}
+  src/common
+)
+
+target_link_libraries(round_trip_receive
+  ${XENOMAI_LIBRARIES}
+)
