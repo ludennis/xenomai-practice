@@ -42,18 +42,28 @@ void ReceiveRoutine(void*)
   }
 }
 
+void terminationHandler(int signal)
+{
+  free(receiveMessage.data);
+  free(sendMessage.data);
+  exit(1);
+}
+
 int main(int argc, char *argv[])
 {
   mlockall(MCL_CURRENT|MCL_FUTURE);
+
+  struct sigaction action;
+  action.sa_handler = terminationHandler;
+  sigemptyset(&action.sa_mask);
+  action.sa_flags = 0;
+  sigaction(SIGINT, &action, NULL);
 
   rt_task_create(&rtReceiveTask, "rtReceiveTask", RtMacro::kStackSize,
     RtMacro::kPriority, T_JOINABLE);
   rt_task_start(&rtReceiveTask, ReceiveRoutine, NULL);
 
   rt_task_join(&rtReceiveTask);
-
-  free(receiveMessage.data);
-  free(sendMessage.data);
 
   return 0;
 }
