@@ -12,8 +12,6 @@ RT_TASK rtSendTask;
 
 RT_QUEUE rtQueue;
 
-RT_QUEUE_INFO rtQueueInfo;
-
 void SendRoutine(void*)
 {
   for (;;)
@@ -22,11 +20,16 @@ void SendRoutine(void*)
     void *message = rt_queue_alloc(&rtQueue, RtMacro::kMessageSize);
     if (message == NULL)
       rt_printf("rt_queue_alloc error\n");
-    rt_queue_inquire(&rtQueue, &rtQueueInfo);
+
     char sendData[] = "yo";
     memcpy(message, sendData, sizeof(char) * RtMacro::kMessageSize);
 
-    rt_queue_send(&rtQueue, message, sizeof(char) * RtMacro::kMessageSize, Q_NORMAL);
+    auto retval = rt_queue_send(&rtQueue, message, sizeof(char) * RtMacro::kMessageSize, Q_NORMAL);
+    if (retval < 0)
+    {
+      rt_printf("rt_queue_send error: %s\n", strerror(-retval));
+    }
+
     rt_task_wait_period(NULL);
   }
 }

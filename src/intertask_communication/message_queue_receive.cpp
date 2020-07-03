@@ -20,8 +20,18 @@ RT_HEAP rtHeap;
 
 void ReceiveRoutine(void*)
 {
+  rt_queue_create(&rtQueue, "rtQueue", RtMacro::kQueuePoolSize,
+    RtMacro::kQueueMessageLimit, Q_FIFO);
+  rt_queue_inquire(&rtQueue, &rtQueueInfo);
+
+  rt_printf("queue, %s, created\n", rtQueueInfo.name);
+
+  // allocate heap for storing messages since -pshared is enabled
+  rt_heap_create(&rtHeap, "rtHeap", RtMacro::kQueuePoolSize, H_SINGLE);
+
   for (;;)
   {
+    rt_queue_inquire(&rtQueue, &rtQueueInfo);
     if (rtQueueInfo.nmessages > 0)
     {
       void **blockPointer;
@@ -47,6 +57,8 @@ void ReceiveRoutine(void*)
 
 void terminationHandler(int signal)
 {
+  rt_heap_delete(&rtHeap);
+  rt_queue_delete(&rtQueue);
   printf("Caught ctrl + c termination signal. Exiting.\n");
   exit(1);
 }
@@ -60,15 +72,6 @@ int main(int argc, char *argv[])
   sigemptyset(&action.sa_mask);
   action.sa_flags = 0;
   sigaction(SIGINT, &action, NULL);
-
-  rt_queue_create(&rtQueue, "rtQueue", RtMacro::kQueuePoolSize,
-    RtMacro::kQueueMessageLimit, Q_FIFO);
-  rt_queue_inquire(&rtQueue, &rtQueueInfo);
-
-  rt_printf("queue, %s, created\n", rtQueueInfo.name);
-
-  // allocate heap for storing messages since -pshared is enabled
-  rt_heap_create(&rtHeap, "rtHeap", RtMacro::kQueuePoolSize, H_SINGLE);
 
   rt_task_create(&rtReceiveTask, "rtReceiveTask", RtMacro::kStackSize,
     RtMacro::kPriority, RtMacro::kMode);
