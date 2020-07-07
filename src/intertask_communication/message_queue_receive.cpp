@@ -34,19 +34,25 @@ void ReceiveRoutine(void*)
     rt_queue_inquire(&rtQueue, &rtQueueInfo);
     if (rtQueueInfo.nmessages > 0)
     {
-      void **blockPointer;
-      auto retval = rt_heap_alloc(&rtHeap, RtMacro::kQueuePoolSize, TM_NONBLOCK, blockPointer);
+      void *blockPointer;
+      auto retval = rt_heap_alloc(&rtHeap, RtMacro::kQueuePoolSize, TM_NONBLOCK, &blockPointer);
       if (retval < 0)
         rt_printf("rt_heap_alloc error: %s\n", strerror(-retval));
 
       auto bytesRead = rt_queue_read(&rtQueue, blockPointer,
         RtMacro::kQueuePoolSize, TM_NONBLOCK);
+
+      char* message = (char*) malloc(sizeof(blockPointer));
+      memcpy(message, blockPointer, sizeof(blockPointer));
+      rt_heap_free(&rtHeap, blockPointer);
+
       if (bytesRead >= 0)
       {
         rt_printf("TaskTwo bytesRead: %ld\n", bytesRead);
-        rt_printf("TaskTwo received: %s\n", blockPointer);
+        rt_printf("TaskTwo received: %s\n", message);
         rt_printf("\n");
       }
+
     }
 
     auto e3 = rt_task_wait_period(NULL);
