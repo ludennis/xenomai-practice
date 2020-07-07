@@ -43,17 +43,18 @@ void ReceiveRoutine(void*)
       auto bytesRead = rt_queue_read(&rtQueue, blockPointer,
         RtMacro::kQueuePoolSize, TM_NONBLOCK);
 
-      char* message = (char*) malloc(sizeof(blockPointer));
-      memcpy(message, blockPointer, sizeof(blockPointer));
-      rt_heap_free(&rtHeap, blockPointer);
-
       if (bytesRead >= 0)
       {
-        rt_printf("TaskTwo bytesRead: %ld\n", bytesRead);
-        rt_printf("TaskTwo received: %s\n", message);
-        rt_printf("\n");
-      }
+        MotorMessage *motorMessage = (MotorMessage*) malloc(sizeof(MotorMessage));
 
+        memcpy(motorMessage, blockPointer, sizeof(MotorMessage));
+
+        rt_printf("TaskTwo bytesRead: %ld\n", bytesRead);
+        rt_printf("TaskTwo received: motorMessage->rpm = %ld\n", motorMessage->rpm);
+        rt_printf("\n");
+
+        rt_heap_free(&rtHeap, blockPointer);
+      }
     }
 
     auto e3 = rt_task_wait_period(NULL);

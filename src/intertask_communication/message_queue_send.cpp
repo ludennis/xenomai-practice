@@ -18,14 +18,15 @@ void SendRoutine(void*)
   for (;;)
   {
     rt_printf("TaskOne: sending hi to rtQueue\n\n");
-    void *message = rt_queue_alloc(&rtQueue, RtMacro::kMessageSize);
+
+    void *message = rt_queue_alloc(&rtQueue, sizeof(MotorMessage));
     if (message == NULL)
       rt_printf("rt_queue_alloc error\n");
+    char *sendData = (char*) malloc(sizeof(MotorMessage));
+    MotorMessage *motorMessageData = new MotorMessage{5000, 1, 0, 10, 20};
+    memcpy(message, motorMessageData, sizeof(MotorMessage));
 
-    char sendData[] = "yo";
-    memcpy(message, sendData, sizeof(char) * RtMacro::kMessageSize);
-
-    auto retval = rt_queue_send(&rtQueue, message, sizeof(char) * RtMacro::kMessageSize, Q_NORMAL);
+    auto retval = rt_queue_send(&rtQueue, message, sizeof(MotorMessage), Q_NORMAL);
     if (retval < 0)
     {
       rt_printf("rt_queue_send error: %s\n", strerror(-retval));
