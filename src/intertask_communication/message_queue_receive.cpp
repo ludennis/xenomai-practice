@@ -8,6 +8,7 @@
 #include <alchemy/heap.h>
 
 #include <RtMacro.h>
+#include <MotorMessage.h>
 
 RT_TASK rtReceiveTask;
 

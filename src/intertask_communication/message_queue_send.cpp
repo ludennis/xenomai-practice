@@ -7,6 +7,7 @@
 #include <alchemy/queue.h>
 
 #include <RtMacro.h>
+#include <MotorMessage.h>
 
 RT_TASK rtSendTask;
 
