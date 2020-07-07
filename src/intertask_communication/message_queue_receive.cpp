@@ -45,13 +45,21 @@ void ReceiveRoutine(void*)
 
       if (bytesRead >= 0)
       {
-        MotorMessage *motorMessage = (MotorMessage*) malloc(sizeof(MotorMessage));
+        // message type
+        int *messageType = (int*) malloc(sizeof(unsigned int));
+        memset(messageType, blockPointer, sizeof(unsigned int));
+        if (*messageType == tMotorMessage)
+        {
+          rt_printf("MotorMessage received!\n");
+          MotorMessage *motorMessage = (MotorMessage*) malloc(sizeof(MotorMessage));
 
-        memcpy(motorMessage, blockPointer, sizeof(MotorMessage));
+          memcpy(motorMessage, blockPointer, sizeof(MotorMessage));
 
-        rt_printf("TaskTwo bytesRead: %ld\n", bytesRead);
-        rt_printf("TaskTwo received: motorMessage->rpm = %ld\n", motorMessage->rpm);
-        rt_printf("\n");
+          rt_printf("TaskTwo bytesRead: %ld\n", bytesRead);
+          rt_printf("TaskTwo received: motorMessage->rpm = %ld\n", motorMessage->rpm);
+          rt_printf("\n");
+        }
+
 
         rt_heap_free(&rtHeap, blockPointer);
       }

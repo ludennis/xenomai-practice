@@ -23,7 +23,7 @@ void SendRoutine(void*)
     if (message == NULL)
       rt_printf("rt_queue_alloc error\n");
     char *sendData = (char*) malloc(sizeof(MotorMessage));
-    MotorMessage *motorMessageData = new MotorMessage{5000, 1, 0, 10, 20};
+    MotorMessage *motorMessageData = new MotorMessage{0, 5000, 1, 0, 10, 20};
     memcpy(message, motorMessageData, sizeof(MotorMessage));
 
     auto retval = rt_queue_send(&rtQueue, message, sizeof(MotorMessage), Q_NORMAL);
